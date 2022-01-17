@@ -57,15 +57,23 @@ namespace DalamudPluginProjectTemplate
         }
 
         #region IDisposable Support
+        private bool _disposed;
+
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (_disposed)
+            {
+                return;
+            }
 
-            this.commandManager.Dispose();
+            if (disposing)
+            {
+                this.commandManager.Dispose();
+                PluginInterface.SavePluginConfig(this.config);
+                PluginInterface.UiBuilder.Draw -= this.ui.Draw;
+            }
 
-            PluginInterface.SavePluginConfig(this.config);
-
-            PluginInterface.UiBuilder.Draw -= this.ui.Draw;
+            this._disposed = true;
         }
 
         public void Dispose()
